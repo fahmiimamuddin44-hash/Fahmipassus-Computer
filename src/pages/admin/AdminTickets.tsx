@@ -40,8 +40,8 @@ export function AdminTickets() {
     storeName: "Fahmipassus Computer",
     storeAddress: "Jl. Contoh Alamat No. 123, Kota, Provinsi",
     storePhone: "0812-3456-7890",
-    receiptPrefix: "SRV",
-    receiptNotes: "Garansi servis berlaku 30 hari sejak tanggal pengambilan dengan menyertakan nota ini."
+    receiptNotes: "Garansi servis berlaku 30 hari sejak tanggal pengambilan dengan menyertakan nota ini.",
+    whatsappMessageFormat: "Halo {customer},\n\nServis perangkat Anda ({device}) dengan nomor servis *{ticketId}* telah selesai.\n\nBiaya akhir: Rp {finalCost}\nRincian: {finalDetails}\n\nSilakan ambil perangkat Anda di toko kami. Terima kasih!"
   });
   
   // Add Ticket State
