@@ -638,7 +638,7 @@ export function AdminTickets() {
       {/* Print Layout (Hidden on screen, visible on print) */}
       <div className="hidden print:block absolute top-0 left-0 w-full h-auto min-h-screen z-[100] bg-white text-black p-4 text-xs" ref={printRef}>
         {ticketToPrint && (
-          <div className="max-w-[400px] mx-auto">
+          <div className="w-full mx-auto">
             <div className="flex justify-between items-start border-b border-black pb-2 mb-2">
               <div>
                 <h1 className="text-lg font-bold text-black">{settings.storeName.toUpperCase()}</h1>
@@ -712,18 +712,18 @@ export function AdminTickets() {
               </div>
             </div>
 
-            <div className="flex justify-between mt-8 pt-2 text-center text-[10px]">
+            <div className="flex justify-between mt-4 pt-2 text-center text-[10px]">
               <div>
-                <p className="mb-8">Hormat Kami,</p>
+                <p className="mb-4">Hormat Kami,</p>
                 <p className="font-bold border-t border-black pt-1 inline-block px-2">{settings.storeName}</p>
               </div>
               <div>
-                <p className="mb-8">Pelanggan,</p>
+                <p className="mb-4">Pelanggan,</p>
                 <p className="font-bold border-t border-black pt-1 inline-block px-2">{ticketToPrint.customer}</p>
               </div>
             </div>
             
-            <div className="mt-4 text-[8px] text-gray-500 text-center border-t border-gray-200 pt-2">
+            <div className="mt-2 text-[8px] text-gray-500 text-center border-t border-gray-200 pt-2">
               <p>Terima kasih telah mempercayakan perbaikan perangkat Anda kepada kami.</p>
               <p>{settings.receiptNotes}</p>
             </div>
