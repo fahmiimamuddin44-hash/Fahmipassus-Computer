@@ -636,72 +636,72 @@ export function AdminTickets() {
       </AnimatePresence>
 
       {/* Print Layout (Hidden on screen, visible on print) */}
-      <div className="hidden print:block absolute top-0 left-0 w-full h-auto min-h-screen z-[100] bg-white text-black p-8" ref={printRef}>
+      <div className="hidden print:block absolute top-0 left-0 w-full h-auto min-h-screen z-[100] bg-white text-black p-4 text-xs" ref={printRef}>
         {ticketToPrint && (
-          <div className="max-w-3xl mx-auto">
-            <div className="flex justify-between items-start border-b-2 border-black pb-6 mb-6">
+          <div className="max-w-[400px] mx-auto">
+            <div className="flex justify-between items-start border-b border-black pb-2 mb-2">
               <div>
-                <h1 className="text-3xl font-bold text-black mb-2">{settings.storeName.toUpperCase()}</h1>
-                <p className="text-gray-600">{settings.storeAddress}</p>
-                <p className="text-gray-600">Telp/WA: {settings.storePhone}</p>
+                <h1 className="text-lg font-bold text-black">{settings.storeName.toUpperCase()}</h1>
+                <p className="text-[10px]">{settings.storeAddress}</p>
+                <p className="text-[10px]">Telp/WA: {settings.storePhone}</p>
               </div>
               <div className="text-right">
-                <h2 className="text-2xl font-bold text-black mb-2">NOTA SERVIS</h2>
-                <p className="text-lg font-medium">No. Resi: {ticketToPrint.ticketId}</p>
-                <p className="text-gray-600">Tanggal: {ticketToPrint.date}</p>
+                <h2 className="text-sm font-bold text-black">NOTA SERVIS</h2>
+                <p className="text-[10px] font-medium">No. Resi: {ticketToPrint.ticketId}</p>
+                <p className="text-[10px]">Tanggal: {ticketToPrint.date}</p>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-8 mb-8">
+            <div className="grid grid-cols-2 gap-2 mb-2">
               <div>
-                <h3 className="font-bold text-lg mb-2 border-b border-gray-300 pb-1">Data Pelanggan</h3>
-                <table className="w-full">
+                <h3 className="font-bold text-[10px] mb-1 border-b border-gray-300">Data Pelanggan</h3>
+                <table className="w-full text-[10px]">
                   <tbody>
                     <tr>
-                      <td className="py-1 text-gray-600 w-24">Nama</td>
-                      <td className="py-1 font-medium">: {ticketToPrint.customer}</td>
+                      <td className="py-0.5 text-gray-600 w-16">Nama</td>
+                      <td className="py-0.5 font-medium">: {ticketToPrint.customer}</td>
                     </tr>
                     <tr>
-                      <td className="py-1 text-gray-600">No. HP</td>
-                      <td className="py-1 font-medium">: {ticketToPrint.phone}</td>
+                      <td className="py-0.5 text-gray-600">No. HP</td>
+                      <td className="py-0.5 font-medium">: {ticketToPrint.phone}</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
               <div>
-                <h3 className="font-bold text-lg mb-2 border-b border-gray-300 pb-1">Data Perangkat</h3>
-                <table className="w-full">
+                <h3 className="font-bold text-[10px] mb-1 border-b border-gray-300">Data Perangkat</h3>
+                <table className="w-full text-[10px]">
                   <tbody>
                     <tr>
-                      <td className="py-1 text-gray-600 w-24">Perangkat</td>
-                      <td className="py-1 font-medium">: {ticketToPrint.device}</td>
+                      <td className="py-0.5 text-gray-600 w-16">Perangkat</td>
+                      <td className="py-0.5 font-medium">: {ticketToPrint.device}</td>
                     </tr>
                     <tr>
-                      <td className="py-1 text-gray-600">Layanan</td>
-                      <td className="py-1 font-medium">: {ticketToPrint.serviceType}</td>
+                      <td className="py-0.5 text-gray-600">Layanan</td>
+                      <td className="py-0.5 font-medium">: {ticketToPrint.serviceType}</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
             </div>
 
-            <div className="mb-8">
-              <h3 className="font-bold text-lg mb-2 border-b border-gray-300 pb-1">Detail Perbaikan</h3>
-              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                <p className="mb-2"><span className="font-medium">Keluhan:</span> {ticketToPrint.issue}</p>
+            <div className="mb-2">
+              <h3 className="font-bold text-[10px] mb-1 border-b border-gray-300">Detail Perbaikan</h3>
+              <div className="bg-gray-50 p-2 rounded border border-gray-200 text-[10px]">
+                <p className="mb-1"><span className="font-medium">Keluhan:</span> {ticketToPrint.issue}</p>
                 {ticketToPrint.status === 3 && ticketToPrint.finalDetails && (
-                  <p className="mt-4 pt-4 border-t border-gray-200"><span className="font-medium">Rincian Tindakan:</span><br/>{ticketToPrint.finalDetails}</p>
+                  <p className="mt-1 pt-1 border-t border-gray-200"><span className="font-medium">Rincian Tindakan:</span><br/>{ticketToPrint.finalDetails}</p>
                 )}
               </div>
             </div>
 
-            <div className="flex justify-end mb-12">
-              <div className="w-64">
-                <table className="w-full">
+            <div className="flex justify-end mb-4">
+              <div className="w-48">
+                <table className="w-full text-[10px]">
                   <tbody>
                     <tr>
-                      <td className="py-2 font-bold text-lg">Total Biaya</td>
-                      <td className="py-2 font-bold text-lg text-right">
+                      <td className="py-1 font-bold">Total Biaya</td>
+                      <td className="py-1 font-bold text-right">
                         {ticketToPrint.status === 3 && ticketToPrint.finalCost 
                           ? `Rp ${ticketToPrint.finalCost.toLocaleString('id-ID')}` 
                           : ticketToPrint.estimatedCost}
@@ -712,18 +712,18 @@ export function AdminTickets() {
               </div>
             </div>
 
-            <div className="flex justify-between mt-16 pt-8 text-center">
+            <div className="flex justify-between mt-8 pt-2 text-center text-[10px]">
               <div>
-                <p className="mb-16">Hormat Kami,</p>
-                <p className="font-bold border-t border-black pt-2 inline-block px-8">{settings.storeName}</p>
+                <p className="mb-8">Hormat Kami,</p>
+                <p className="font-bold border-t border-black pt-1 inline-block px-2">{settings.storeName}</p>
               </div>
               <div>
-                <p className="mb-16">Pelanggan,</p>
-                <p className="font-bold border-t border-black pt-2 inline-block px-8">{ticketToPrint.customer}</p>
+                <p className="mb-8">Pelanggan,</p>
+                <p className="font-bold border-t border-black pt-1 inline-block px-2">{ticketToPrint.customer}</p>
               </div>
             </div>
             
-            <div className="mt-12 text-sm text-gray-500 text-center border-t border-gray-200 pt-4">
+            <div className="mt-4 text-[8px] text-gray-500 text-center border-t border-gray-200 pt-2">
               <p>Terima kasih telah mempercayakan perbaikan perangkat Anda kepada kami.</p>
               <p>{settings.receiptNotes}</p>
             </div>
