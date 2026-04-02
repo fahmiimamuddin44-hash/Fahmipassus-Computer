@@ -9,3 +9,12 @@
     @apply bg-slate-950 text-slate-50 antialiased;
   }
 }
+
+@media print {
+  @page {
+    margin: 0;
+  }
+  body {
+    margin: 1cm;
+  }
+}
