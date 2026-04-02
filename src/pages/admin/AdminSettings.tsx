@@ -15,6 +15,10 @@ export function AdminSettings() {
     storePhone: "0812-3456-7890",
     storeEmail: "info@fahmipassus.com",
     storeDescription: "Toko komputer terpercaya untuk rakit PC, servis, dan aksesoris.",
+    heroTitle: "Tingkatkan Performa Tanpa Batas",
+    heroSubtitle: "Temukan komponen PC terbaik, laptop gaming terbaru, atau rakit PC impianmu. Kami juga menyediakan layanan servis profesional untuk menjaga perangkatmu tetap prima.",
+    heroPromo: "Diskon 15% untuk Rakitan PC Custom",
+    logoUrl: "",
     mapCoordinates: "-7.182232, 108.365349",
     openingHoursEveryday: "08:00 - 20:00",
     openingHoursThursday: "08:00 - 17:00",
@@ -96,6 +100,50 @@ export function AdminSettings() {
       </div>
 
       <form onSubmit={handleSave} className="space-y-6">
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+          <h2 className="text-lg font-bold text-white mb-4 border-b border-slate-800 pb-2">Tampilan Website</h2>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-400 mb-1">URL Logo Toko</label>
+              <input
+                type="text"
+                value={settings.logoUrl || ""}
+                onChange={(e) => setSettings({...settings, logoUrl: e.target.value})}
+                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-sky-500"
+                placeholder="https://example.com/logo.png"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-400 mb-1">Judul Hero</label>
+              <input
+                type="text"
+                value={settings.heroTitle || ""}
+                onChange={(e) => setSettings({...settings, heroTitle: e.target.value})}
+                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-sky-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-400 mb-1">Deskripsi Hero</label>
+              <textarea
+                value={settings.heroSubtitle || ""}
+                onChange={(e) => setSettings({...settings, heroSubtitle: e.target.value})}
+                rows={3}
+                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-sky-500 resize-none"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-400 mb-1">Promo Hero</label>
+              <input
+                type="text"
+                value={settings.heroPromo || ""}
+                onChange={(e) => setSettings({...settings, heroPromo: e.target.value})}
+                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-sky-500"
+              />
+            </div>
+          </div>
+        </div>
+
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6">
           <h2 className="text-lg font-bold text-white mb-4 border-b border-slate-800 pb-2">Informasi Toko</h2>
           

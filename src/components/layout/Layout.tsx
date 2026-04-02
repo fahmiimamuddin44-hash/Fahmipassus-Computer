@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import { Navbar } from "./Navbar";
 import { Footer } from "./Footer";
 import { CartDrawer } from "../CartDrawer";
+import { WhatsAppButton } from "../WhatsAppButton";
 import { useState } from "react";
 
 export function Layout() {
@@ -15,6 +16,7 @@ export function Layout() {
       </main>
       <Footer />
       <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <WhatsAppButton />
     </div>
   );
 }

@@ -15,14 +15,17 @@ export function Navbar({ onOpenCart }: NavbarProps) {
   const location = useLocation();
   const { totalItems } = useCartStore();
   const [storeName, setStoreName] = useState("Fahmipassus Computer");
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchSettings = async () => {
       try {
         const docRef = doc(db, "settings", "general");
         const docSnap = await getDoc(docRef);
-        if (docSnap.exists() && docSnap.data().storeName) {
-          setStoreName(docSnap.data().storeName);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          if (data.storeName) setStoreName(data.storeName);
+          if (data.logoUrl) setLogoUrl(data.logoUrl);
         }
       } catch (error) {
         console.error("Error fetching settings:", error);
@@ -37,7 +40,7 @@ export function Navbar({ onOpenCart }: NavbarProps) {
     { name: "Servis", path: "/servis" },
     { name: "Rakit PC", path: "/rakit-pc" },
     { name: "Lokasi", path: "/lokasi" },
-    { name: "Cek Status", path: "/cek-status" },
+    { name: "Cek status Servis", path: "/cek-status" },
   ];
 
   return (
@@ -47,7 +50,11 @@ export function Navbar({ onOpenCart }: NavbarProps) {
           {/* Logo */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center gap-2">
-              <Cpu className="h-8 w-8 text-sky-500" />
+              {logoUrl ? (
+                <img src={logoUrl} alt={storeName} className="h-8 w-8 object-contain" referrerPolicy="no-referrer" />
+              ) : (
+                <Cpu className="h-8 w-8 text-sky-500" />
+              )}
               <span className="text-xl font-bold tracking-tight text-white">
                 {storeName.split(' ')[0]} <span className="text-sky-500">{storeName.split(' ').slice(1).join(' ')}</span>
               </span>
@@ -74,18 +81,8 @@ export function Navbar({ onOpenCart }: NavbarProps) {
             </div>
           </div>
 
-          {/* Search & Actions */}
+          {/* Actions */}
           <div className="hidden md:flex items-center gap-4">
-            <div className="relative">
-              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                <Search className="h-4 w-4 text-slate-400" />
-              </div>
-              <input
-                type="text"
-                className="block w-full rounded-full border-0 bg-slate-800 py-1.5 pl-10 pr-4 text-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm sm:leading-6"
-                placeholder="Cari produk..."
-              />
-            </div>
             <button 
               onClick={onOpenCart}
               className="relative text-slate-300 hover:text-white transition-colors"
@@ -96,9 +93,6 @@ export function Navbar({ onOpenCart }: NavbarProps) {
                   {totalItems()}
                 </span>
               )}
-            </button>
-            <button className="text-slate-300 hover:text-white transition-colors">
-              <User className="h-5 w-5" />
             </button>
             <Link to="/admin" className="text-slate-300 hover:text-sky-400 transition-colors ml-2" title="Admin Dashboard">
               <Shield className="h-5 w-5" />
@@ -154,18 +148,6 @@ export function Navbar({ onOpenCart }: NavbarProps) {
             >
               Admin Dashboard
             </Link>
-            <div className="mt-4 px-3">
-              <div className="relative">
-                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                  <Search className="h-4 w-4 text-slate-400" />
-                </div>
-                <input
-                  type="text"
-                  className="block w-full rounded-md border-0 bg-slate-800 py-2 pl-10 pr-4 text-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-sky-500 sm:text-sm"
-                  placeholder="Cari produk..."
-                />
-              </div>
-            </div>
           </div>
         </div>
       )}

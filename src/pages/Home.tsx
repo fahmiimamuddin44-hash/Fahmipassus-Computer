@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 import { Monitor, Cpu, Wrench, HardDrive, ArrowRight, Star, ShoppingCart, PackageOpen } from "lucide-react";
-import { collection, getDocs, query, limit } from "firebase/firestore";
+import { collection, getDocs, query, limit, doc, getDoc } from "firebase/firestore";
 import { db, handleFirestoreError, OperationType } from "@/lib/firebase";
 
 const categories = [
@@ -15,10 +15,27 @@ const categories = [
 export function Home() {
   const [bestSellers, setBestSellers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [heroSettings, setHeroSettings] = useState({
+    heroTitle: "Tingkatkan Performa Tanpa Batas",
+    heroSubtitle: "Temukan komponen PC terbaik, laptop gaming terbaru, atau rakit PC impianmu. Kami juga menyediakan layanan servis profesional untuk menjaga perangkatmu tetap prima.",
+    heroPromo: "Diskon 15% untuk Rakitan PC Custom"
+  });
 
   useEffect(() => {
-    const fetchBestSellers = async () => {
+    const fetchData = async () => {
       try {
+        // Fetch settings
+        const settingsDoc = await getDoc(doc(db, "settings", "general"));
+        if (settingsDoc.exists()) {
+          const data = settingsDoc.data();
+          setHeroSettings({
+            heroTitle: data.heroTitle || "Tingkatkan Performa Tanpa Batas",
+            heroSubtitle: data.heroSubtitle || "Temukan komponen PC terbaik, laptop gaming terbaru, atau rakit PC impianmu. Kami juga menyediakan layanan servis profesional untuk menjaga perangkatmu tetap prima.",
+            heroPromo: data.heroPromo || "Diskon 15% untuk Rakitan PC Custom"
+          });
+        }
+
+        // Fetch products
         const q = query(collection(db, "products"), limit(4));
         const snap = await getDocs(q);
         if (!snap.empty) {
@@ -28,12 +45,12 @@ export function Home() {
           setBestSellers([]);
         }
       } catch (error) {
-        handleFirestoreError(error, OperationType.GET, "products");
+        console.error("Error fetching data:", error);
       } finally {
         setIsLoading(false);
       }
     };
-    fetchBestSellers();
+    fetchData();
   }, []);
 
   const formatRupiah = (price: number) => {
@@ -62,13 +79,13 @@ export function Home() {
               className="max-w-2xl"
             >
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-6">
-                Tingkatkan Performa <br />
+                {heroSettings.heroTitle.split(' ').slice(0, -2).join(' ')} <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-blue-600">
-                  Tanpa Batas
+                  {heroSettings.heroTitle.split(' ').slice(-2).join(' ')}
                 </span>
               </h1>
               <p className="text-lg text-slate-400 mb-8 leading-relaxed">
-                Temukan komponen PC terbaik, laptop gaming terbaru, atau rakit PC impianmu. Kami juga menyediakan layanan servis profesional untuk menjaga perangkatmu tetap prima.
+                {heroSettings.heroSubtitle}
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
@@ -104,7 +121,7 @@ export function Home() {
                 <div className="absolute bottom-6 left-6 right-6">
                   <div className="bg-slate-900/80 backdrop-blur-sm border border-slate-700 p-4 rounded-xl">
                     <p className="text-sky-400 font-medium text-sm mb-1">Promo Bulan Ini</p>
-                    <p className="text-white font-bold text-lg">Diskon 15% untuk Rakitan PC Custom</p>
+                    <p className="text-white font-bold text-lg">{heroSettings.heroPromo}</p>
                   </div>
                 </div>
               </div>
