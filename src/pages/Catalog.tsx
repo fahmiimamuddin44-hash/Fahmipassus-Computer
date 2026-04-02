@@ -5,6 +5,7 @@ import { Search, Filter, ShoppingCart, Star, SlidersHorizontal, PackageOpen } fr
 import { collection, getDocs } from "firebase/firestore";
 import { db, handleFirestoreError, OperationType } from "@/lib/firebase";
 import { useCartStore } from "@/lib/store";
+import { ProductDetailModal } from "@/components/ProductDetailModal";
 
 const categories = ["Semua", "Laptop", "PC Rakitan", "Prosesor", "Motherboard", "VGA", "RAM", "Storage", "Monitor", "PSU", "Case"];
 
@@ -12,6 +13,7 @@ export function Catalog() {
   const [searchParams] = useSearchParams();
   const initialCategoryParam = searchParams.get("kategori");
   const { addItem } = useCartStore();
+  const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
   
   // Map URL parameter back to category name
   const initialCategory = useMemo(() => {
@@ -75,10 +77,18 @@ export function Catalog() {
       image: product.image || "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?auto=format&fit=crop&q=80&w=200",
       category: product.category,
     });
+    setSelectedProduct(null);
   };
 
   return (
     <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
+      <ProductDetailModal 
+        product={selectedProduct} 
+        isOpen={!!selectedProduct} 
+        onClose={() => setSelectedProduct(null)}
+        onAddToCart={handleAddToCart}
+        formatRupiah={formatRupiah}
+      />
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-white mb-2">Katalog Produk</h1>
@@ -173,7 +183,7 @@ export function Catalog() {
                   transition={{ duration: 0.3, delay: index * 0.05 }}
                   className="group flex flex-col bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden hover:border-sky-500/50 transition-colors"
                 >
-                  <div className="relative aspect-square overflow-hidden bg-slate-800">
+                  <div className="relative aspect-square overflow-hidden bg-slate-800 cursor-pointer" onClick={() => setSelectedProduct(product)}>
                     <img
                       src={product.image || "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?auto=format&fit=crop&q=80&w=500"}
                       alt={product.name}

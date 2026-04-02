@@ -4,6 +4,8 @@ import { motion } from "motion/react";
 import { Monitor, Cpu, Wrench, HardDrive, ArrowRight, Star, ShoppingCart, PackageOpen } from "lucide-react";
 import { collection, getDocs, query, limit, doc, getDoc } from "firebase/firestore";
 import { db, handleFirestoreError, OperationType } from "@/lib/firebase";
+import { ProductDetailModal } from "@/components/ProductDetailModal";
+import { useCartStore } from "@/lib/store";
 
 const categories = [
   { name: "Laptop", icon: Monitor, color: "text-blue-500", bg: "bg-blue-500/10" },
@@ -15,6 +17,8 @@ const categories = [
 export function Home() {
   const [bestSellers, setBestSellers] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
+  const { addItem } = useCartStore();
   const [heroSettings, setHeroSettings] = useState({
     heroTitle: "Tingkatkan Performa Tanpa Batas",
     heroSubtitle: "Temukan komponen PC terbaik, laptop gaming terbaru, atau rakit PC impianmu. Kami juga menyediakan layanan servis profesional untuk menjaga perangkatmu tetap prima.",
@@ -61,8 +65,26 @@ export function Home() {
     }).format(price);
   };
 
+  const handleAddToCart = (product: any) => {
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image || "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?auto=format&fit=crop&q=80&w=200",
+      category: product.category,
+    });
+    setSelectedProduct(null);
+  };
+
   return (
     <div className="flex flex-col gap-16 pb-16">
+      <ProductDetailModal 
+        product={selectedProduct} 
+        isOpen={!!selectedProduct} 
+        onClose={() => setSelectedProduct(null)}
+        onAddToCart={handleAddToCart}
+        formatRupiah={formatRupiah}
+      />
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-slate-950 pt-6 md:pt-10 lg:pt-12 pb-8 lg:pb-12">
         <div className="absolute inset-0 z-0">
@@ -185,7 +207,7 @@ export function Home() {
                 transition={{ duration: 0.4, delay: index * 0.1 }}
                 className="group flex flex-col bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden hover:border-sky-500/50 transition-colors"
               >
-                <div className="relative aspect-square overflow-hidden bg-slate-800">
+                <div className="relative aspect-square overflow-hidden bg-slate-800 cursor-pointer" onClick={() => setSelectedProduct(product)}>
                   <img
                     src={product.image || "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?auto=format&fit=crop&q=80&w=500"}
                     alt={product.name}
@@ -211,7 +233,13 @@ export function Home() {
                   )}
                   <div className="mt-auto pt-4 flex items-center justify-between border-t border-slate-800/50">
                     <span className="text-lg font-bold text-emerald-400">{formatRupiah(product.price)}</span>
-                    <button className="p-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-sky-500 hover:text-white transition-colors">
+                    <button onClick={() => addItem({
+                      id: product.id,
+                      name: product.name,
+                      price: product.price,
+                      image: product.image || "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?auto=format&fit=crop&q=80&w=200",
+                      category: product.category,
+                    })} className="p-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-sky-500 hover:text-white transition-colors">
                       <ShoppingCart className="h-5 w-5" />
                     </button>
                   </div>
