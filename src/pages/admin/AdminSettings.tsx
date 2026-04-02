@@ -22,8 +22,8 @@ export function AdminSettings() {
     mapCoordinates: "-7.182232, 108.365349",
     openingHoursEveryday: "08:00 - 20:00",
     openingHoursThursday: "08:00 - 17:00",
-    receiptPrefix: "SRV",
-    receiptNotes: "Garansi servis berlaku 30 hari sejak tanggal pengambilan dengan menyertakan nota ini."
+    receiptNotes: "Garansi servis berlaku 30 hari sejak tanggal pengambilan dengan menyertakan nota ini.",
+    whatsappMessageFormat: "Halo {customer},\n\nServis perangkat Anda ({device}) dengan nomor servis *{ticketId}* telah selesai.\n\nBiaya akhir: Rp {finalCost}\nRincian: {finalDetails}\n\nSilakan ambil perangkat Anda di toko kami. Terima kasih!"
   });
 
   useEffect(() => {
@@ -258,17 +258,17 @@ export function AdminSettings() {
           
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-400 mb-1">Prefix No. Resi</label>
-              <input
-                type="text"
-                value={settings.receiptPrefix}
-                onChange={(e) => setSettings({...settings, receiptPrefix: e.target.value})}
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-sky-500"
-                placeholder="Contoh: SRV"
+              <label className="block text-sm font-medium text-slate-400 mb-1">Format Pesan WhatsApp</label>
+              <textarea
+                value={settings.whatsappMessageFormat}
+                onChange={(e) => setSettings({...settings, whatsappMessageFormat: e.target.value})}
+                rows={5}
+                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-sky-500 resize-none"
+                placeholder="Format pesan..."
               />
-              <p className="text-xs text-slate-500 mt-1">Format resi: [PREFIX]-[TANGGAL]-[KODE UNIK]</p>
+              <p className="text-xs text-slate-500 mt-1">Variabel: {"{customer}"}, {"{device}"}, {"{ticketId}"}, {"{finalCost}"}, {"{finalDetails}"}</p>
             </div>
-
+            
             <div>
               <label className="block text-sm font-medium text-slate-400 mb-1">Catatan Kaki Nota</label>
               <textarea

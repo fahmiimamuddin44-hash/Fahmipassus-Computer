@@ -51,9 +51,13 @@ export function AdminTickets() {
     customer: "",
     phone: "",
     device: "",
+    deviceType: "",
+    completeness: "",
+    entryDate: new Date().toISOString().split('T')[0],
     issue: "",
     serviceType: "Servis Umum",
     estimatedCost: "Menunggu pengecekan",
+    ticketId: ""
   });
 
   const showToast = (message: string, type: 'success' | 'error') => {
@@ -132,31 +136,31 @@ export function AdminTickets() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Generate Ticket ID
-    const date = new Date();
-    const dateStr = date.toISOString().slice(0, 10).replace(/-/g, "");
-    const randomStr = Math.random().toString(36).substring(2, 6).toUpperCase();
-    const ticketId = `${settings.receiptPrefix}-${dateStr}-${randomStr}`;
+    const currentYear = new Date().getFullYear();
+    const fullTicketId = `${currentYear}-${formData.ticketId}`;
 
     const newTicket = {
-      ticketId,
+      ticketId: fullTicketId,
       customer: formData.customer,
       phone: formData.phone,
       device: formData.device,
+      deviceType: formData.deviceType,
+      completeness: formData.completeness,
+      entryDate: formData.entryDate,
       issue: formData.issue,
       serviceType: formData.serviceType,
       estimatedCost: formData.estimatedCost,
       status: 0,
-      date: date.toLocaleDateString("id-ID", {
+      date: new Date(formData.entryDate).toLocaleDateString("id-ID", {
         weekday: "long",
         year: "numeric",
         month: "long",
         day: "numeric",
       }),
-      createdAt: date.toISOString(),
+      createdAt: new Date().toISOString(),
       updates: [
         {
-          date: date.toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" }) + " WIB",
+          date: new Date().toLocaleString("id-ID", { dateStyle: "medium", timeStyle: "short" }) + " WIB",
           status: "Diterima",
           note: "Barang diterima dan sedang dalam antrean pengecekan.",
         },
@@ -170,9 +174,13 @@ export function AdminTickets() {
         customer: "",
         phone: "",
         device: "",
+        deviceType: "",
+        completeness: "",
+        entryDate: new Date().toISOString().split('T')[0],
         issue: "",
         serviceType: "Servis Umum",
         estimatedCost: "Menunggu pengecekan",
+        ticketId: ""
       });
       fetchTickets();
       showToast("Data servis berhasil ditambahkan!", "success");
@@ -282,7 +290,8 @@ export function AdminTickets() {
             <table className="w-full text-left text-sm text-slate-300">
               <thead className="bg-slate-950/50 text-slate-400 border-b border-slate-800">
                 <tr>
-                  <th className="px-6 py-4 font-medium">No. Resi</th>
+                  <th className="px-6 py-4 font-medium">No.</th>
+                  <th className="px-6 py-4 font-medium">No. Servis</th>
                   <th className="px-6 py-4 font-medium">Pelanggan</th>
                   <th className="px-6 py-4 font-medium">Perangkat</th>
                   <th className="px-6 py-4 font-medium">Status</th>
@@ -290,8 +299,9 @@ export function AdminTickets() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800">
-                {filteredTickets.map((ticket) => (
+                {filteredTickets.map((ticket, index) => (
                   <tr key={ticket.id} className="hover:bg-slate-800/50 transition-colors">
+                    <td className="px-6 py-4 text-slate-400">{index + 1}</td>
                     <td className="px-6 py-4 font-medium text-sky-400">{ticket.ticketId}</td>
                     <td className="px-6 py-4">
                       <div className="font-medium text-white">{ticket.customer}</div>
@@ -444,7 +454,13 @@ export function AdminTickets() {
                     <button
                       type="button"
                       onClick={() => {
-                        const message = `Halo ${selectedTicket.customer},\n\nServis perangkat Anda (${selectedTicket.device}) dengan nomor resi *${selectedTicket.ticketId}* telah selesai.\n\nBiaya akhir: Rp ${Number(finalCost).toLocaleString("id-ID")}\nRincian: ${finalDetails}\n\nSilakan ambil perangkat Anda di toko kami. Terima kasih!`;
+                        const message = settings.whatsappMessageFormat
+                          .replace("{customer}", selectedTicket.customer)
+                          .replace("{device}", selectedTicket.device)
+                          .replace("{ticketId}", selectedTicket.ticketId)
+                          .replace("{finalCost}", Number(finalCost).toLocaleString("id-ID"))
+                          .replace("{finalDetails}", finalDetails);
+                        
                         const encodedMessage = encodeURIComponent(message);
                         let phone = selectedTicket.phone;
                         if (phone.startsWith('0')) {
@@ -496,6 +512,30 @@ export function AdminTickets() {
                 <form id="add-ticket-form" onSubmit={handleAddTicket} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
+                      <label className="block text-sm font-medium text-slate-400 mb-1">No. Servis (Tahun-ID)</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.ticketId}
+                        onChange={(e) => setFormData({...formData, ticketId: e.target.value})}
+                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-sky-500"
+                        placeholder="Contoh: 2026-001"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-400 mb-1">Tanggal Masuk</label>
+                      <input
+                        type="date"
+                        required
+                        value={formData.entryDate}
+                        onChange={(e) => setFormData({...formData, entryDate: e.target.value})}
+                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-sky-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
                       <label className="block text-sm font-medium text-slate-400 mb-1">Nama Pelanggan</label>
                       <input
                         type="text"
@@ -532,6 +572,32 @@ export function AdminTickets() {
                       />
                     </div>
                     <div>
+                      <label className="block text-sm font-medium text-slate-400 mb-1">Jenis Perangkat</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.deviceType}
+                        onChange={(e) => setFormData({...formData, deviceType: e.target.value})}
+                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-sky-500"
+                        placeholder="Contoh: Laptop"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-400 mb-1">Kelengkapan</label>
+                    <input
+                      type="text"
+                      required
+                      value={formData.completeness}
+                      onChange={(e) => setFormData({...formData, completeness: e.target.value})}
+                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-sky-500"
+                      placeholder="Contoh: Unit + Charger"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
                       <label className="block text-sm font-medium text-slate-400 mb-1">Jenis Layanan</label>
                       <select
                         value={formData.serviceType}
@@ -545,6 +611,16 @@ export function AdminTickets() {
                         <option value="Lainnya">Lainnya</option>
                       </select>
                     </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-400 mb-1">Estimasi Biaya (Opsional)</label>
+                      <input
+                        type="text"
+                        value={formData.estimatedCost}
+                        onChange={(e) => setFormData({...formData, estimatedCost: e.target.value})}
+                        className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-sky-500"
+                        placeholder="Contoh: Rp 150.000 atau Menunggu pengecekan"
+                      />
+                    </div>
                   </div>
 
                   <div>
@@ -556,17 +632,6 @@ export function AdminTickets() {
                       onChange={(e) => setFormData({...formData, issue: e.target.value})}
                       placeholder="Jelaskan secara detail keluhan atau kerusakan perangkat..."
                       className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-sky-500 resize-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-slate-400 mb-1">Estimasi Biaya (Opsional)</label>
-                    <input
-                      type="text"
-                      value={formData.estimatedCost}
-                      onChange={(e) => setFormData({...formData, estimatedCost: e.target.value})}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-sky-500"
-                      placeholder="Contoh: Rp 150.000 atau Menunggu pengecekan"
                     />
                   </div>
                 </form>
@@ -647,8 +712,8 @@ export function AdminTickets() {
               </div>
               <div className="text-right">
                 <h2 className="text-lg font-bold text-black">NOTA SERVIS</h2>
-                <p className="text-[11pt] font-medium">No. Resi: {ticketToPrint.ticketId}</p>
-                <p className="text-[11pt]">Tanggal: {ticketToPrint.date}</p>
+                <p className="text-[11pt] font-medium">No. Servis: {ticketToPrint.ticketId}</p>
+                <p className="text-[11pt]">Tanggal Masuk: {ticketToPrint.entryDate || ticketToPrint.date}</p>
               </div>
             </div>
 
@@ -673,12 +738,16 @@ export function AdminTickets() {
                 <table className="w-full text-[11pt]">
                   <tbody>
                     <tr>
-                      <td className="py-0.5 text-gray-700 w-20">Perangkat</td>
+                      <td className="py-0.5 text-gray-700 w-24">Perangkat</td>
                       <td className="py-0.5 font-medium">: {ticketToPrint.device}</td>
                     </tr>
                     <tr>
-                      <td className="py-0.5 text-gray-700">Layanan</td>
-                      <td className="py-0.5 font-medium">: {ticketToPrint.serviceType}</td>
+                      <td className="py-0.5 text-gray-700">Jenis</td>
+                      <td className="py-0.5 font-medium">: {ticketToPrint.deviceType}</td>
+                    </tr>
+                    <tr>
+                      <td className="py-0.5 text-gray-700">Kelengkapan</td>
+                      <td className="py-0.5 font-medium">: {ticketToPrint.completeness}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -690,7 +759,7 @@ export function AdminTickets() {
               <div className="bg-gray-50 p-2 rounded border border-gray-200 text-[11pt]">
                 <div className="flex justify-between">
                   <p className="flex-1"><span className="font-medium">Keluhan:</span> {ticketToPrint.issue} {ticketToPrint.status === 3 && ticketToPrint.finalDetails && `| Rincian: ${ticketToPrint.finalDetails}`}</p>
-                  <p className="font-bold whitespace-nowrap ml-4">Total: {ticketToPrint.status === 3 && ticketToPrint.finalCost ? `Rp ${ticketToPrint.finalCost.toLocaleString('id-ID')}` : ticketToPrint.estimatedCost}</p>
+                  <p className="font-bold whitespace-nowrap ml-4">Total: {ticketToPrint.status === 3 && ticketToPrint.finalCost ? `Rp ${Number(ticketToPrint.finalCost).toLocaleString('id-ID')}` : ticketToPrint.estimatedCost}</p>
                 </div>
               </div>
             </div>
