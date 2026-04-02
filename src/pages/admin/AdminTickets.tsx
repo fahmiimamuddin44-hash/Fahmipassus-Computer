@@ -686,36 +686,22 @@ export function AdminTickets() {
             </div>
 
             <div className="mb-2">
-              <h3 className="font-bold text-[11pt] mb-1 border-b border-gray-300">Detail Perbaikan</h3>
+              <h3 className="font-bold text-[11pt] mb-1 border-b border-gray-300">Detail Perbaikan & Biaya</h3>
               <div className="bg-gray-50 p-2 rounded border border-gray-200 text-[11pt]">
-                <p><span className="font-medium">Keluhan:</span> {ticketToPrint.issue} {ticketToPrint.status === 3 && ticketToPrint.finalDetails && `| Rincian: ${ticketToPrint.finalDetails}`}</p>
-              </div>
-            </div>
-
-            <div className="flex justify-end mb-2">
-              <div className="w-64">
-                <table className="w-full text-[11pt]">
-                  <tbody>
-                    <tr>
-                      <td className="py-1 font-bold">Total Biaya</td>
-                      <td className="py-1 font-bold text-right">
-                        {ticketToPrint.status === 3 && ticketToPrint.finalCost 
-                          ? `Rp ${ticketToPrint.finalCost.toLocaleString('id-ID')}` 
-                          : ticketToPrint.estimatedCost}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                <div className="flex justify-between">
+                  <p className="flex-1"><span className="font-medium">Keluhan:</span> {ticketToPrint.issue} {ticketToPrint.status === 3 && ticketToPrint.finalDetails && `| Rincian: ${ticketToPrint.finalDetails}`}</p>
+                  <p className="font-bold whitespace-nowrap ml-4">Total: {ticketToPrint.status === 3 && ticketToPrint.finalCost ? `Rp ${ticketToPrint.finalCost.toLocaleString('id-ID')}` : ticketToPrint.estimatedCost}</p>
+                </div>
               </div>
             </div>
 
             <div className="flex justify-between mt-2 pt-2 text-center text-[11pt]">
               <div>
-                <p className="mb-8">Hormat Kami,</p>
+                <p className="mb-4">Hormat Kami,</p>
                 <p className="font-bold border-t border-black pt-1 inline-block px-4">{settings.storeName}</p>
               </div>
               <div>
-                <p className="mb-8">Pelanggan,</p>
+                <p className="mb-4">Pelanggan,</p>
                 <p className="font-bold border-t border-black pt-1 inline-block px-4">{ticketToPrint.customer}</p>
               </div>
             </div>
