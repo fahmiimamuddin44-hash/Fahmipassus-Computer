@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { flushSync } from "react-dom";
 import { collection, getDocs, doc, updateDoc, arrayUnion, addDoc, deleteDoc, getDoc } from "firebase/firestore";
 import { db, handleFirestoreError, OperationType } from "@/lib/firebase";
-import { Wrench, CheckCircle2, Clock, Search, Edit2, Plus, X, AlertCircle, Trash2, Printer } from "lucide-react";
+import { Wrench, CheckCircle2, Clock, Search, Edit2, Plus, X, AlertCircle, Trash2, Printer, MessageCircle } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
 const steps = [
@@ -322,6 +322,29 @@ export function AdminTickets() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
+                        {ticket.status === 3 && (
+                          <button
+                            onClick={() => {
+                              const message = settings.whatsappMessageFormat
+                                .replace("{customer}", ticket.customer)
+                                .replace("{device}", ticket.device)
+                                .replace("{ticketId}", ticket.ticketId)
+                                .replace("{finalCost}", ticket.finalCost ? Number(ticket.finalCost).toLocaleString("id-ID") : "0")
+                                .replace("{finalDetails}", ticket.finalDetails || "");
+                              
+                              const encodedMessage = encodeURIComponent(message);
+                              let phone = ticket.phone;
+                              if (phone.startsWith('0')) {
+                                phone = '62' + phone.substring(1);
+                              }
+                              window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+                            }}
+                            className="p-2 text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-colors"
+                            title="Kirim WhatsApp"
+                          >
+                            <MessageCircle className="w-4 h-4" />
+                          </button>
+                        )}
                         <button
                           onClick={() => handlePrintTicket(ticket)}
                           className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
@@ -449,31 +472,7 @@ export function AdminTickets() {
                     {isUpdating ? "Menyimpan..." : "Simpan Update"}
                   </button>
                 </div>
-                {newStatus === 3 && selectedTicket && (
-                  <div className="pt-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const message = settings.whatsappMessageFormat
-                          .replace("{customer}", selectedTicket.customer)
-                          .replace("{device}", selectedTicket.device)
-                          .replace("{ticketId}", selectedTicket.ticketId)
-                          .replace("{finalCost}", Number(finalCost).toLocaleString("id-ID"))
-                          .replace("{finalDetails}", finalDetails);
-                        
-                        const encodedMessage = encodeURIComponent(message);
-                        let phone = selectedTicket.phone;
-                        if (phone.startsWith('0')) {
-                          phone = '62' + phone.substring(1);
-                        }
-                        window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
-                      }}
-                      className="w-full px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl transition-colors font-medium flex items-center justify-center gap-2"
-                    >
-                      Kirim Pesan via WhatsApp
-                    </button>
-                  </div>
-                )}
+                {/* WhatsApp button removed */}
               </form>
             </motion.div>
           </>
