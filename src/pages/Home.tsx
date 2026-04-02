@@ -207,40 +207,40 @@ export function Home() {
                 transition={{ duration: 0.4, delay: index * 0.1 }}
                 className="group flex flex-col bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden hover:border-sky-500/50 transition-colors"
               >
-                <div className="relative aspect-square overflow-hidden bg-slate-800 cursor-pointer" onClick={() => setSelectedProduct(product)}>
+                <div className="relative aspect-[4/3] overflow-hidden bg-slate-800 cursor-pointer" onClick={() => setSelectedProduct(product)}>
                   <img
                     src={product.image || "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?auto=format&fit=crop&q=80&w=500"}
                     alt={product.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"
                   />
-                  <div className="absolute top-3 left-3 bg-slate-900/80 backdrop-blur-md px-2 py-1 rounded text-xs font-medium text-slate-300">
+                  <div className="absolute top-2 left-2 bg-slate-900/80 backdrop-blur-md px-1.5 py-0.5 rounded text-[10px] font-medium text-slate-300">
                     {product.category}
                   </div>
                 </div>
-                <div className="p-5 flex flex-col flex-1">
-                  <div className="flex items-center gap-1 mb-2">
-                    <Star className="h-4 w-4 fill-amber-500 text-amber-500" />
-                    <span className="text-sm font-medium text-slate-300">{product.rating || "0.0"}</span>
+                <div className="p-3 flex flex-col flex-1">
+                  <div className="flex items-center gap-1 mb-1">
+                    <Star className="h-3 w-3 fill-amber-500 text-amber-500" />
+                    <span className="text-xs font-medium text-slate-300">{product.rating || "0.0"}</span>
                   </div>
-                  <h3 className="text-lg font-semibold text-white mb-1 line-clamp-2 group-hover:text-sky-400 transition-colors">
+                  <h3 className="text-base font-semibold text-white mb-1 line-clamp-2 group-hover:text-sky-400 transition-colors">
                     {product.name}
                   </h3>
                   {product.description && (
-                    <p className="text-sm text-slate-400 mb-3 line-clamp-2">
+                    <p className="text-xs text-slate-400 mb-2 line-clamp-2">
                       {product.description}
                     </p>
                   )}
-                  <div className="mt-auto pt-4 flex items-center justify-between border-t border-slate-800/50">
-                    <span className="text-lg font-bold text-emerald-400">{formatRupiah(product.price)}</span>
+                  <div className="mt-auto pt-3 flex items-center justify-between border-t border-slate-800/50">
+                    <span className="text-sm font-bold text-emerald-400">{formatRupiah(product.price)}</span>
                     <button onClick={() => addItem({
                       id: product.id,
                       name: product.name,
                       price: product.price,
                       image: product.image || "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?auto=format&fit=crop&q=80&w=200",
                       category: product.category,
-                    })} className="p-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-sky-500 hover:text-white transition-colors">
-                      <ShoppingCart className="h-5 w-5" />
+                    })} className="p-1.5 rounded-lg bg-slate-800 text-slate-300 hover:bg-sky-500 hover:text-white transition-colors">
+                      <ShoppingCart className="h-4 w-4" />
                     </button>
                   </div>
                 </div>
