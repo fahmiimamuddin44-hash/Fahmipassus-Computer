@@ -1,0 +1,76 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "A user of the application, including admins.",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "format": "email" },
+        "name": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "customer"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["email", "role"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "A computer component, laptop, or pre-built PC.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "price": { "type": "number" },
+        "rating": { "type": "number" },
+        "image": { "type": "string", "format": "uri" },
+        "socket": { "type": "string" },
+        "memory": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "category", "price", "image"]
+    },
+    "ServiceTicket": {
+      "title": "Service Ticket",
+      "description": "A booking for computer repair or service.",
+      "type": "object",
+      "properties": {
+        "ticketId": { "type": "string" },
+        "customer": { "type": "string" },
+        "phone": { "type": "string" },
+        "device": { "type": "string" },
+        "issue": { "type": "string" },
+        "date": { "type": "string" },
+        "serviceType": { "type": "string", "enum": ["dropoff", "pickup"] },
+        "status": { "type": "number" },
+        "estimatedCost": { "type": "string" },
+        "updates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": { "type": "string" },
+              "status": { "type": "string" },
+              "note": { "type": "string" }
+            },
+            "required": ["date", "status", "note"]
+          }
+        },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["ticketId", "customer", "phone", "device", "issue", "status", "updates"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Stores user profiles and roles."
+    },
+    "products/{productId}": {
+      "schema": { "$ref": "#/entities/Product" },
+      "description": "Stores all products available in the catalog and PC builder."
+    },
+    "service_tickets/{ticketId}": {
+      "schema": { "$ref": "#/entities/ServiceTicket" },
+      "description": "Stores service bookings and their tracking updates."
+    }
+  }
+}
