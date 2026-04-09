@@ -88,104 +88,102 @@ export function ProductDetailModal({ product, isOpen, onClose, onAddToCart, form
           <script src="https://cdn.tailwindcss.com"></script>
           <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
           <style>
-            @page {
-              size: A4;
-              margin: 0;
-            }
+            @page { size: A4; margin: 0; }
             body {
               font-family: 'Plus Jakarta Sans', sans-serif;
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
               background: white;
+              margin: 0;
+              padding: 0;
             }
-            .a4-container {
+            .a4-page {
               width: 210mm;
               height: 297mm;
               padding: 10mm;
               box-sizing: border-box;
-              position: relative;
-              background: #ffffff;
+              background: white;
             }
-            .inner-border {
-              border: 4px solid #0ea5e9;
+            .border-container {
+              border: 8px solid #0ea5e9;
               height: 100%;
-              padding: 10mm;
+              border-radius: 40px;
+              padding: 12mm;
+              box-sizing: border-box;
+              display: flex;
+              flex-direction: column;
               position: relative;
-              border-radius: 20px;
             }
-            .price-tag {
+            .price-box {
               background: #0ea5e9;
               color: white;
-              padding: 0.75rem 2rem;
-              border-radius: 1rem;
-              font-weight: 800;
+              padding: 20px 50px;
+              border-radius: 24px;
+              font-weight: 900;
+              font-size: 56px;
               display: inline-block;
+              box-shadow: 0 20px 50px rgba(14, 165, 233, 0.2);
             }
           </style>
         </head>
         <body>
-          <div class="a4-container">
-            <div class="inner-border">
-              <!-- Header -->
-              <div class="flex items-center justify-between mb-8 border-b border-slate-200 pb-6">
-                <div class="flex items-center gap-4">
-                  ${storeSettings.logoUrl ? `<img src="${storeSettings.logoUrl}" class="h-14 w-auto object-contain" />` : `<div class="w-10 h-10 bg-sky-500 rounded-lg"></div>`}
+          <div class="a4-page">
+            <div class="border-container">
+              <div class="flex items-center justify-between mb-10 border-b-2 border-slate-100 pb-8">
+                <div class="flex items-center gap-6">
+                  ${storeSettings.logoUrl ? `<img src="${storeSettings.logoUrl}" class="h-16 w-auto object-contain" />` : `<div class="w-12 h-12 bg-sky-500 rounded-xl"></div>`}
                   <div>
-                    <h1 class="text-2xl font-extrabold tracking-tight text-slate-900 uppercase">${storeSettings.storeName}</h1>
-                    <p class="text-slate-500 font-bold tracking-widest text-[10px]">SALES • SERVIS • MAINTENANCE</p>
+                    <h1 class="text-3xl font-extrabold text-slate-900 uppercase tracking-tight">${storeSettings.storeName}</h1>
+                    <p class="text-slate-500 font-bold tracking-[0.2em] text-[10px]">SALES • SERVIS • MAINTENANCE</p>
                   </div>
                 </div>
                 <div class="text-right">
-                  <p class="text-sky-600 font-bold text-sm">KATALOG PROMOSI</p>
-                  <p class="text-slate-400 text-[10px] font-medium">${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                  <p class="text-sky-600 font-black text-lg">PROMOSI TERBATAS</p>
+                  <p class="text-slate-400 text-xs font-bold">${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
                 </div>
               </div>
 
-              <!-- Main Content -->
-              <div class="flex flex-col items-center">
-                <div class="w-full h-[450px] mb-8 bg-slate-50 rounded-2xl overflow-hidden flex items-center justify-center p-4">
+              <div class="flex-1 flex flex-col items-center justify-center py-10">
+                <div class="w-full h-[450px] mb-10 bg-slate-50 rounded-[30px] flex items-center justify-center p-8">
                   <img src="${product.image}" class="max-w-full max-h-full object-contain" />
                 </div>
 
-                <div class="text-center w-full px-4">
-                  <span class="inline-block px-3 py-1 bg-sky-50 text-sky-600 rounded-full text-[10px] font-bold mb-3 uppercase tracking-wider border border-sky-100">
+                <div class="text-center w-full px-6">
+                  <span class="inline-block px-4 py-1.5 bg-sky-50 text-sky-600 rounded-full text-xs font-black mb-4 uppercase tracking-widest border-2 border-sky-100">
                     ${product.category}
                   </span>
                   
-                  <h2 class="text-4xl font-extrabold text-slate-900 mb-2 leading-tight">
+                  <h2 class="text-5xl font-black text-slate-900 mb-4 leading-tight tracking-tighter">
                     ${product.name}
                   </h2>
                   
-                  <p class="text-lg text-slate-500 leading-relaxed max-w-2xl mx-auto mb-6 font-medium">
-                    ${product.description || "Performa terbaik untuk produktivitas Anda. Segera dapatkan di toko kami!"}
+                  <p class="text-base text-slate-500 leading-relaxed max-w-2xl mx-auto mb-10 font-bold">
+                    ${product.description || "Dapatkan kualitas terbaik hanya di toko kami. Stok terbatas!"}
                   </p>
                   
-                  <div class="price-tag text-4xl mb-8">
+                  <div class="price-box">
                     ${formatRupiah(product.price)}
                   </div>
                 </div>
               </div>
 
-              <!-- Footer -->
-              <div class="absolute bottom-10 left-10 right-10">
-                <div class="flex items-center justify-between bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                  <div class="flex gap-6 items-center">
-                    <div class="p-2 bg-white rounded-xl shadow-sm border border-slate-100" id="qrcode-container"></div>
-                    <div>
-                      <p class="text-slate-400 font-bold text-[10px] uppercase tracking-widest mb-1">Scan untuk detail</p>
-                      <p class="text-slate-900 font-bold text-xs">Lihat spesifikasi lengkap</p>
-                    </div>
+              <div class="mt-auto flex items-center justify-between bg-slate-50 p-10 rounded-[40px] border-2 border-slate-100">
+                <div class="flex gap-8 items-center">
+                  <div class="p-4 bg-white rounded-3xl shadow-xl border-2 border-slate-100" id="qrcode-container"></div>
+                  <div>
+                    <p class="text-slate-400 font-black text-[11px] uppercase tracking-[0.2em] mb-2">Scan untuk detail</p>
+                    <p class="text-slate-900 font-black text-lg">Lihat spesifikasi lengkap</p>
                   </div>
-                  
-                  <div class="text-right">
-                    <div class="mb-3">
-                      <p class="text-slate-400 font-bold text-[10px] uppercase tracking-widest mb-0.5">Hubungi Kami</p>
-                      <p class="text-xl font-extrabold text-slate-900">${storeSettings.storePhone}</p>
-                    </div>
-                    <div>
-                      <p class="text-slate-400 font-bold text-[10px] uppercase tracking-widest mb-0.5">Lokasi Toko</p>
-                      <p class="text-[10px] font-bold text-slate-700 max-w-[200px] leading-tight ml-auto">${storeSettings.storeAddress}</p>
-                    </div>
+                </div>
+                
+                <div class="text-right">
+                  <div class="mb-6">
+                    <p class="text-slate-400 font-black text-[11px] uppercase tracking-[0.2em] mb-2">Hubungi Kami</p>
+                    <p class="text-4xl font-black text-slate-900">${storeSettings.storePhone}</p>
+                  </div>
+                  <div>
+                    <p class="text-slate-400 font-black text-[11px] uppercase tracking-[0.2em] mb-2">Lokasi Toko</p>
+                    <p class="text-xs font-black text-slate-700 max-w-[300px] leading-tight ml-auto">${storeSettings.storeAddress}</p>
                   </div>
                 </div>
               </div>
@@ -195,9 +193,7 @@ export function ProductDetailModal({ product, isOpen, onClose, onAddToCart, form
             window.onload = () => {
               const qrContainer = document.getElementById('qrcode-container');
               qrContainer.innerHTML = \`<img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(productUrl)}" />\`;
-              setTimeout(() => {
-                window.print();
-              }, 800);
+              setTimeout(() => { window.print(); }, 800);
             };
           </script>
         </body>
@@ -210,23 +206,27 @@ export function ProductDetailModal({ product, isOpen, onClose, onAddToCart, form
     if (!brochureRef.current) return;
     setIsExporting(true);
     try {
-      // Ensure the element is visible for a split second or use a clone
+      // Use a more robust approach for html-to-image
       const dataUrl = await toPng(brochureRef.current, {
         cacheBust: true,
         width: 794,
         height: 1123,
+        pixelRatio: 2, // Higher quality
         style: {
+          visibility: 'visible',
+          position: 'static',
           left: '0',
-          position: 'relative',
+          top: '0'
         }
       });
+      
       const link = document.createElement('a');
-      link.download = `Brosur-${product.name}.png`;
+      link.download = `Brosur-${product.name.replace(/\s+/g, '-')}.png`;
       link.href = dataUrl;
       link.click();
     } catch (err) {
       console.error('Error exporting image:', err);
-      alert("Gagal menyimpan gambar. Silakan coba lagi.");
+      alert("Gagal menyimpan gambar. Silakan gunakan fitur 'Cetak PDF' sebagai alternatif.");
     } finally {
       setIsExporting(false);
     }
@@ -236,71 +236,87 @@ export function ProductDetailModal({ product, isOpen, onClose, onAddToCart, form
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm" />
-        <Dialog.Content className="fixed left-[50%] top-[50%] z-[100] w-[90vw] max-w-lg translate-x-[-50%] translate-y-[-50%] rounded-2xl bg-slate-900 border border-slate-800 p-6 shadow-2xl">
-          <div className="flex justify-between items-start mb-4">
-            <Dialog.Title className="text-xl font-bold text-white">{product.name}</Dialog.Title>
-            <Dialog.Close className="text-slate-400 hover:text-white">
+        <Dialog.Content className="fixed left-[50%] top-[50%] z-[100] w-[95vw] max-w-lg max-h-[90vh] translate-x-[-50%] translate-y-[-50%] rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl flex flex-col overflow-hidden">
+          {/* Fixed Header */}
+          <div className="flex justify-between items-center p-6 border-b border-slate-800 bg-slate-900 z-10">
+            <Dialog.Title className="text-xl font-bold text-white pr-8 truncate">{product.name}</Dialog.Title>
+            <Dialog.Close className="text-slate-400 hover:text-white transition-colors">
               <X className="h-6 w-6" />
             </Dialog.Close>
           </div>
           
-          <img
-            src={product.image || "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?auto=format&fit=crop&q=80&w=500"}
-            alt={product.name}
-            className="w-full h-64 object-cover rounded-xl mb-4"
-            referrerPolicy="no-referrer"
-          />
-          
-          <div className="flex items-center gap-2 mb-4">
-            <span className="bg-slate-800 px-2 py-1 rounded text-xs font-medium text-slate-300">{product.category}</span>
-            <div className="flex items-center gap-1">
-              <Star className="h-4 w-4 fill-amber-500 text-amber-500" />
-              <span className="text-sm font-medium text-slate-300">{product.rating || "0.0"}</span>
+          {/* Scrollable Body */}
+          <div className="flex-1 overflow-y-auto p-6 scrollbar-hide">
+            <img
+              src={product.image || "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?auto=format&fit=crop&q=80&w=500"}
+              alt={product.name}
+              className="w-full h-64 object-cover rounded-xl mb-4"
+              referrerPolicy="no-referrer"
+            />
+            
+            <div className="flex items-center gap-2 mb-4">
+              <span className="bg-slate-800 px-2 py-1 rounded text-xs font-medium text-slate-300">{product.category}</span>
+              <div className="flex items-center gap-1">
+                <Star className="h-4 w-4 fill-amber-500 text-amber-500" />
+                <span className="text-sm font-medium text-slate-300">{product.rating || "0.0"}</span>
+              </div>
+            </div>
+
+            <p className="text-slate-400 mb-6 text-sm leading-relaxed">{product.description || "Tidak ada deskripsi tersedia."}</p>
+            
+            <div className="grid grid-cols-2 gap-3 mb-6">
+              <button
+                onClick={handleShareWhatsApp}
+                className="flex items-center justify-center gap-2 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors text-sm font-medium"
+              >
+                <Share2 className="h-4 w-4" />
+                Bagikan
+              </button>
+              <button
+                onClick={handleCopyLink}
+                className="flex items-center justify-center gap-2 py-2 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-colors text-sm font-medium"
+              >
+                {isCopied ? <Check className="h-4 w-4 text-emerald-400" /> : <Copy className="h-4 w-4" />}
+                {isCopied ? "Tersalin" : "Salin Link"}
+              </button>
+              <button
+                onClick={handlePrint}
+                className="flex items-center justify-center gap-2 py-2 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20 hover:bg-sky-500/20 transition-colors text-sm font-medium"
+              >
+                <FileDown className="h-4 w-4" />
+                Cetak PDF
+              </button>
+              <button
+                onClick={handleExportImage}
+                disabled={isExporting}
+                className="flex items-center justify-center gap-2 py-2 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20 hover:bg-sky-500/20 transition-colors text-sm font-medium disabled:opacity-50"
+              >
+                <ImageIcon className="h-4 w-4" />
+                {isExporting ? "Memproses..." : "Simpan Gambar"}
+              </button>
             </div>
           </div>
 
-          <p className="text-slate-400 mb-6 text-sm leading-relaxed">{product.description || "Tidak ada deskripsi tersedia."}</p>
-          
-          <div className="grid grid-cols-2 gap-3 mb-6">
+          {/* Fixed Footer */}
+          <div className="p-6 border-t border-slate-800 bg-slate-900 flex items-center justify-between">
+            <span className="text-xl font-bold text-emerald-400">{formatRupiah(product.price)}</span>
             <button
-              onClick={handleShareWhatsApp}
-              className="flex items-center justify-center gap-2 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors text-sm font-medium"
+              onClick={() => onAddToCart(product)}
+              className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-sky-500 text-white font-semibold hover:bg-sky-600 transition-colors shadow-lg shadow-sky-500/20"
             >
-              <Share2 className="h-4 w-4" />
-              Bagikan
-            </button>
-            <button
-              onClick={handleCopyLink}
-              className="flex items-center justify-center gap-2 py-2 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-colors text-sm font-medium"
-            >
-              {isCopied ? <Check className="h-4 w-4 text-emerald-400" /> : <Copy className="h-4 w-4" />}
-              {isCopied ? "Tersalin" : "Salin Link"}
-            </button>
-            <button
-              onClick={handlePrint}
-              className="flex items-center justify-center gap-2 py-2 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20 hover:bg-sky-500/20 transition-colors text-sm font-medium"
-            >
-              <FileDown className="h-4 w-4" />
-              Cetak PDF
-            </button>
-            <button
-              onClick={handleExportImage}
-              disabled={isExporting}
-              className="flex items-center justify-center gap-2 py-2 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20 hover:bg-sky-500/20 transition-colors text-sm font-medium disabled:opacity-50"
-            >
-              <ImageIcon className="h-4 w-4" />
-              {isExporting ? "Memproses..." : "Simpan Gambar"}
+              <ShoppingCart className="h-5 w-5" />
+              Tambah ke Keranjang
             </button>
           </div>
 
-          {/* Hidden Brochure for Image Export */}
-          <div className="fixed -left-[9999px] top-0">
+          {/* Hidden Brochure for Image Export - Redesigned for consistency */}
+          <div className="fixed -left-[9999px] top-0 pointer-events-none">
             <div 
               ref={brochureRef}
               style={{ width: '794px', height: '1123px' }}
               className="bg-white p-8 relative font-['Plus_Jakarta_Sans']"
             >
-              <div className="border-[6px] border-sky-500 h-full p-10 rounded-[40px] relative flex flex-col">
+              <div className="border-[8px] border-sky-500 h-full p-12 rounded-[40px] relative flex flex-col box-border">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-10 border-b-2 border-slate-100 pb-8">
                   <div className="flex items-center gap-6">
@@ -311,35 +327,35 @@ export function ProductDetailModal({ product, isOpen, onClose, onAddToCart, form
                     )}
                     <div>
                       <h1 className="text-4xl font-black tracking-tight text-slate-900 uppercase">{storeSettings.storeName}</h1>
-                      <p className="text-slate-500 font-bold tracking-[0.2em] text-xs">SALES • SERVIS • MAINTENANCE</p>
+                      <p className="text-slate-500 font-bold tracking-[0.2em] text-[11px]">SALES • SERVIS • MAINTENANCE</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sky-600 font-black text-xl">KATALOG PROMOSI</p>
+                    <p className="text-sky-600 font-black text-xl">PROMOSI TERBATAS</p>
                     <p className="text-slate-400 text-sm font-bold">{new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
                   </div>
                 </div>
 
                 {/* Content */}
                 <div className="flex-1 flex flex-col items-center justify-center">
-                  <div className="w-full h-[500px] mb-12 bg-slate-50 rounded-[40px] flex items-center justify-center p-10">
+                  <div className="w-full h-[480px] mb-12 bg-slate-50 rounded-[40px] flex items-center justify-center p-10">
                     <img src={product.image} className="max-w-full max-h-full object-contain" />
                   </div>
 
-                  <div className="text-center w-full">
-                    <span className="inline-block px-5 py-2 bg-sky-50 text-sky-600 rounded-full text-sm font-black mb-6 uppercase tracking-widest border-2 border-sky-100">
+                  <div className="text-center w-full px-10">
+                    <span className="inline-block px-5 py-2 bg-sky-50 text-sky-600 rounded-full text-xs font-black mb-6 uppercase tracking-widest border-2 border-sky-100">
                       {product.category}
                     </span>
                     
-                    <h2 className="text-6xl font-black text-slate-900 mb-4 leading-none tracking-tighter">
+                    <h2 className="text-5xl font-black text-slate-900 mb-4 leading-tight tracking-tighter">
                       {product.name}
                     </h2>
                     
-                    <p className="text-2xl text-slate-500 leading-relaxed max-w-2xl mx-auto mb-10 font-bold">
-                      {product.description || "Performa terbaik untuk produktivitas Anda. Segera dapatkan di toko kami!"}
+                    <p className="text-base text-slate-500 leading-relaxed max-w-2xl mx-auto mb-10 font-bold">
+                      {product.description || "Dapatkan kualitas terbaik hanya di toko kami. Stok terbatas!"}
                     </p>
                     
-                    <div className="bg-sky-500 text-white px-12 py-6 rounded-3xl font-black text-6xl inline-block shadow-2xl shadow-sky-200">
+                    <div className="bg-sky-500 text-white px-14 py-6 rounded-3xl font-black text-6xl inline-block shadow-2xl shadow-sky-200">
                       {formatRupiah(product.price)}
                     </div>
                   </div>
@@ -349,38 +365,27 @@ export function ProductDetailModal({ product, isOpen, onClose, onAddToCart, form
                 <div className="mt-auto flex items-center justify-between bg-slate-50 p-10 rounded-[40px] border-2 border-slate-100">
                   <div className="flex gap-8 items-center">
                     <div className="p-4 bg-white rounded-3xl shadow-xl border-2 border-slate-100">
-                      <QRCodeSVG value={productUrl} size={120} />
+                      <QRCodeSVG value={productUrl} size={110} />
                     </div>
                     <div>
-                      <p className="text-slate-400 font-black text-xs uppercase tracking-[0.3em] mb-2">Scan untuk detail</p>
+                      <p className="text-slate-400 font-black text-[11px] uppercase tracking-[0.2em] mb-2">Scan untuk detail</p>
                       <p className="text-slate-900 font-black text-lg">Lihat spesifikasi lengkap</p>
                     </div>
                   </div>
                   
                   <div className="text-right">
                     <div className="mb-6">
-                      <p className="text-slate-400 font-black text-xs uppercase tracking-[0.3em] mb-2">Hubungi Kami</p>
+                      <p className="text-slate-400 font-black text-[11px] uppercase tracking-[0.2em] mb-2">Hubungi Kami</p>
                       <p className="text-4xl font-black text-slate-900">{storeSettings.storePhone}</p>
                     </div>
                     <div>
-                      <p className="text-slate-400 font-black text-xs uppercase tracking-[0.3em] mb-2">Lokasi Toko</p>
-                      <p className="text-sm font-black text-slate-700 max-w-[300px] leading-tight ml-auto">{storeSettings.storeAddress}</p>
+                      <p className="text-slate-400 font-black text-[11px] uppercase tracking-[0.2em] mb-2">Lokasi Toko</p>
+                      <p className="text-xs font-black text-slate-700 max-w-[300px] leading-tight ml-auto">{storeSettings.storeAddress}</p>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-
-          <div className="flex items-center justify-between border-t border-slate-800 pt-4">
-            <span className="text-xl font-bold text-emerald-400">{formatRupiah(product.price)}</span>
-            <button
-              onClick={() => onAddToCart(product)}
-              className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-sky-500 text-white font-semibold hover:bg-sky-600 transition-colors"
-            >
-              <ShoppingCart className="h-5 w-5" />
-              Tambah ke Keranjang
-            </button>
           </div>
         </Dialog.Content>
       </Dialog.Portal>
