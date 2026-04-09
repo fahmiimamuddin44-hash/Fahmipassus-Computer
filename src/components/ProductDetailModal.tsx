@@ -210,14 +210,23 @@ export function ProductDetailModal({ product, isOpen, onClose, onAddToCart, form
     if (!brochureRef.current) return;
     setIsExporting(true);
     try {
+      // Ensure the element is visible for a split second or use a clone
       const dataUrl = await toPng(brochureRef.current, {
         cacheBust: true,
-        width: 794, // A4 width in pixels at 96dpi
-        height: 1123, // A4 height in pixels at 96dpi
+        width: 794,
+        height: 1123,
+        style: {
+          left: '0',
+          position: 'relative',
+        }
       });
-      saveAs(dataUrl, `Brosur-${product.name}.png`);
+      const link = document.createElement('a');
+      link.download = `Brosur-${product.name}.png`;
+      link.href = dataUrl;
+      link.click();
     } catch (err) {
-      console.error('oops, something went wrong!', err);
+      console.error('Error exporting image:', err);
+      alert("Gagal menyimpan gambar. Silakan coba lagi.");
     } finally {
       setIsExporting(false);
     }
@@ -257,8 +266,8 @@ export function ProductDetailModal({ product, isOpen, onClose, onAddToCart, form
               onClick={handleShareWhatsApp}
               className="flex items-center justify-center gap-2 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors text-sm font-medium"
             >
-              <MessageCircle className="h-4 w-4" />
-              WhatsApp
+              <Share2 className="h-4 w-4" />
+              Bagikan
             </button>
             <button
               onClick={handleCopyLink}
