@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc, serverTimestamp } from "firebase/firestore";
 import { db, handleFirestoreError, OperationType } from "@/lib/firebase";
-import { Plus, Trash2, Package, Image as ImageIcon, Edit2, X, AlertCircle, CheckCircle2 } from "lucide-react";
+import { Plus, Trash2, Package, Image as ImageIcon, Edit2, X, AlertCircle, CheckCircle2, Copy } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
 export function AdminProducts() {
@@ -124,6 +124,23 @@ export function AdminProducts() {
     setEditingId(product.id);
     // Scroll to top to see the form
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleDuplicate = (product: any) => {
+    setFormData({
+      name: `${product.name} (Copy)`,
+      category: product.category,
+      price: product.price.toString(),
+      image: product.image || "",
+      brand: product.brand || "",
+      socket: product.socket || "",
+      memory: product.memory || "",
+      description: product.description || "",
+      stock: product.stock !== undefined ? product.stock.toString() : "0",
+    });
+    setEditingId(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    showToast("Data produk disalin ke form!", "success");
   };
 
   const cancelEdit = () => {
@@ -441,6 +458,13 @@ export function AdminProducts() {
                         </td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex items-center justify-end gap-2">
+                            <button
+                              onClick={() => handleDuplicate(product)}
+                              className="p-2 text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-colors"
+                              title="Duplikat Produk"
+                            >
+                              <Copy className="w-4 h-4" />
+                            </button>
                             <button
                               onClick={() => handleEdit(product)}
                               className="p-2 text-sky-400 hover:bg-sky-500/10 rounded-lg transition-colors"
