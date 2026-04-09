@@ -29,7 +29,7 @@ export function AdminProducts() {
   
   const [formData, setFormData] = useState(initialFormState);
 
-  const categories = ["Laptop", "PC Rakitan", "Prosesor", "Motherboard", "VGA", "RAM", "Storage", "Monitor", "PSU", "Case"];
+  const categories = ["Laptop", "PC Rakitan", "Prosesor", "Motherboard", "VGA", "RAM", "Storage", "Monitor", "PSU", "Case", "CCTV", "Finger Print"];
   
   // Socket options based on brand
   const intelSockets = ["LGA 775", "LGA 1156", "LGA 1155", "LGA 1150", "LGA 1151", "LGA 1200", "LGA 1700", "LGA 1851"];

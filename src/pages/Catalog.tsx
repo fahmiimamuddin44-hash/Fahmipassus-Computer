@@ -7,7 +7,7 @@ import { db, handleFirestoreError, OperationType } from "@/lib/firebase";
 import { useCartStore } from "@/lib/store";
 import { ProductDetailModal } from "@/components/ProductDetailModal";
 
-const categories = ["Semua", "Laptop", "PC Rakitan", "Prosesor", "Motherboard", "VGA", "RAM", "Storage", "Monitor", "PSU", "Case"];
+const categories = ["Semua", "Laptop", "PC Rakitan", "Prosesor", "Motherboard", "VGA", "RAM", "Storage", "Monitor", "PSU", "Case", "CCTV", "Finger Print"];
 
 export function Catalog() {
   const [searchParams] = useSearchParams();
