@@ -1,9 +1,11 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { X, ShoppingCart, Star, Share2, Printer, MessageCircle, Instagram, Copy, Check } from "lucide-react";
+import { X, ShoppingCart, Star, Share2, Printer, MessageCircle, Instagram, Copy, Check, FileDown, Image as ImageIcon } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { toPng } from 'html-to-image';
+import { saveAs } from 'file-saver';
 
 interface Product {
   id: string;
@@ -25,6 +27,8 @@ interface ProductDetailModalProps {
 
 export function ProductDetailModal({ product, isOpen, onClose, onAddToCart, formatRupiah }: ProductDetailModalProps) {
   const [isCopied, setIsCopied] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const brochureRef = useRef<HTMLDivElement>(null);
   const [storeSettings, setStoreSettings] = useState({
     storeName: "Fahmipassus Computer",
     storeAddress: "Jl. Contoh Alamat No. 123",
@@ -92,103 +96,96 @@ export function ProductDetailModal({ product, isOpen, onClose, onAddToCart, form
               font-family: 'Plus Jakarta Sans', sans-serif;
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
+              background: white;
             }
             .a4-container {
               width: 210mm;
               height: 297mm;
-              padding: 15mm;
+              padding: 10mm;
               box-sizing: border-box;
               position: relative;
-              overflow: hidden;
               background: #ffffff;
             }
-            .gradient-bg {
-              position: absolute;
-              top: 0;
-              right: 0;
-              width: 100%;
+            .inner-border {
+              border: 4px solid #0ea5e9;
               height: 100%;
-              background: radial-gradient(circle at top right, #f0f9ff 0%, #ffffff 50%);
-              z-index: -1;
+              padding: 10mm;
+              position: relative;
+              border-radius: 20px;
             }
             .price-tag {
               background: #0ea5e9;
               color: white;
-              padding: 1rem 2.5rem;
+              padding: 0.75rem 2rem;
               border-radius: 1rem;
               font-weight: 800;
-              box-shadow: 0 10px 25px -5px rgba(14, 165, 233, 0.4);
-            }
-            @media print {
-              .no-print { display: none; }
+              display: inline-block;
             }
           </style>
         </head>
         <body>
           <div class="a4-container">
-            <div class="gradient-bg"></div>
-            
-            <!-- Header -->
-            <div class="flex items-center justify-between mb-12 border-b-2 border-slate-100 pb-8">
-              <div class="flex items-center gap-4">
-                ${storeSettings.logoUrl ? `<img src="${storeSettings.logoUrl}" class="h-16 w-auto object-contain" />` : `<div class="w-12 h-12 bg-sky-500 rounded-xl"></div>`}
-                <div>
-                  <h1 class="text-3xl font-extrabold tracking-tight text-slate-900 uppercase">${storeSettings.storeName}</h1>
-                  <p class="text-slate-500 font-semibold tracking-wide text-sm">PREMIUM COMPUTER SOLUTIONS</p>
+            <div class="inner-border">
+              <!-- Header -->
+              <div class="flex items-center justify-between mb-8 border-b border-slate-200 pb-6">
+                <div class="flex items-center gap-4">
+                  ${storeSettings.logoUrl ? `<img src="${storeSettings.logoUrl}" class="h-14 w-auto object-contain" />` : `<div class="w-10 h-10 bg-sky-500 rounded-lg"></div>`}
+                  <div>
+                    <h1 class="text-2xl font-extrabold tracking-tight text-slate-900 uppercase">${storeSettings.storeName}</h1>
+                    <p class="text-slate-500 font-bold tracking-widest text-[10px]">SALES • SERVIS • MAINTENANCE</p>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <p class="text-sky-600 font-bold text-sm">KATALOG PROMOSI</p>
+                  <p class="text-slate-400 text-[10px] font-medium">${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
                 </div>
               </div>
-              <div class="text-right">
-                <p class="text-sky-600 font-bold text-lg">PROMOSI TERBATAS</p>
-                <p class="text-slate-400 text-sm font-medium">${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-              </div>
-            </div>
 
-            <!-- Main Content -->
-            <div class="flex flex-col items-center">
-              <div class="relative w-full mb-12 group">
-                <div class="absolute -inset-4 bg-sky-100 rounded-[2rem] blur-2xl opacity-30"></div>
-                <img src="${product.image}" class="relative w-full h-[400px] object-contain rounded-3xl" />
-              </div>
+              <!-- Main Content -->
+              <div class="flex flex-col items-center">
+                <div class="w-full h-[450px] mb-8 bg-slate-50 rounded-2xl overflow-hidden flex items-center justify-center p-4">
+                  <img src="${product.image}" class="max-w-full max-h-full object-contain" />
+                </div>
 
-              <div class="text-center max-w-3xl">
-                <span class="inline-block px-4 py-1.5 bg-sky-50 text-sky-600 rounded-full text-sm font-bold mb-4 uppercase tracking-wider border border-sky-100">
-                  ${product.category}
-                </span>
-                <h2 class="text-6xl font-extrabold text-slate-900 mb-8 leading-tight tracking-tighter">
-                  ${product.name}
-                </h2>
-                
-                <div class="inline-block mb-10">
-                  <div class="price-tag text-5xl">
+                <div class="text-center w-full px-4">
+                  <span class="inline-block px-3 py-1 bg-sky-50 text-sky-600 rounded-full text-[10px] font-bold mb-3 uppercase tracking-wider border border-sky-100">
+                    ${product.category}
+                  </span>
+                  
+                  <h2 class="text-4xl font-extrabold text-slate-900 mb-2 leading-tight">
+                    ${product.name}
+                  </h2>
+                  
+                  <p class="text-lg text-slate-500 leading-relaxed max-w-2xl mx-auto mb-6 font-medium">
+                    ${product.description || "Performa terbaik untuk produktivitas Anda. Segera dapatkan di toko kami!"}
+                  </p>
+                  
+                  <div class="price-tag text-4xl mb-8">
                     ${formatRupiah(product.price)}
                   </div>
                 </div>
-
-                <p class="text-2xl text-slate-500 leading-relaxed max-w-2xl mx-auto mb-16 font-medium">
-                  ${product.description || "Dapatkan performa maksimal dan kualitas terbaik hanya di toko kami. Stok terbatas, segera miliki sekarang!"}
-                </p>
               </div>
-            </div>
 
-            <!-- Footer -->
-            <div class="absolute bottom-12 left-12 right-12">
-              <div class="flex items-end justify-between bg-slate-50 p-8 rounded-[2rem] border border-slate-100">
-                <div class="flex gap-8 items-center">
-                  <div class="p-3 bg-white rounded-2xl shadow-sm border border-slate-100" id="qrcode-container"></div>
-                  <div>
-                    <p class="text-slate-400 font-bold text-xs uppercase tracking-widest mb-1">Scan untuk detail</p>
-                    <p class="text-slate-900 font-bold text-sm">Lihat spesifikasi lengkap & testimoni</p>
+              <!-- Footer -->
+              <div class="absolute bottom-10 left-10 right-10">
+                <div class="flex items-center justify-between bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                  <div class="flex gap-6 items-center">
+                    <div class="p-2 bg-white rounded-xl shadow-sm border border-slate-100" id="qrcode-container"></div>
+                    <div>
+                      <p class="text-slate-400 font-bold text-[10px] uppercase tracking-widest mb-1">Scan untuk detail</p>
+                      <p class="text-slate-900 font-bold text-xs">Lihat spesifikasi lengkap</p>
+                    </div>
                   </div>
-                </div>
-                
-                <div class="text-right">
-                  <div class="mb-4">
-                    <p class="text-slate-400 font-bold text-xs uppercase tracking-widest mb-1">Hubungi Kami</p>
-                    <p class="text-2xl font-extrabold text-slate-900">${storeSettings.storePhone}</p>
-                  </div>
-                  <div>
-                    <p class="text-slate-400 font-bold text-xs uppercase tracking-widest mb-1">Lokasi Toko</p>
-                    <p class="text-sm font-bold text-slate-700 max-w-[250px] leading-snug">${storeSettings.storeAddress}</p>
+                  
+                  <div class="text-right">
+                    <div class="mb-3">
+                      <p class="text-slate-400 font-bold text-[10px] uppercase tracking-widest mb-0.5">Hubungi Kami</p>
+                      <p class="text-xl font-extrabold text-slate-900">${storeSettings.storePhone}</p>
+                    </div>
+                    <div>
+                      <p class="text-slate-400 font-bold text-[10px] uppercase tracking-widest mb-0.5">Lokasi Toko</p>
+                      <p class="text-[10px] font-bold text-slate-700 max-w-[200px] leading-tight ml-auto">${storeSettings.storeAddress}</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -197,7 +194,7 @@ export function ProductDetailModal({ product, isOpen, onClose, onAddToCart, form
           <script>
             window.onload = () => {
               const qrContainer = document.getElementById('qrcode-container');
-              qrContainer.innerHTML = \`<img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(productUrl)}" />\`;
+              qrContainer.innerHTML = \`<img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(productUrl)}" />\`;
               setTimeout(() => {
                 window.print();
               }, 800);
@@ -207,6 +204,23 @@ export function ProductDetailModal({ product, isOpen, onClose, onAddToCart, form
       </html>
     `);
     printWindow.document.close();
+  };
+
+  const handleExportImage = async () => {
+    if (!brochureRef.current) return;
+    setIsExporting(true);
+    try {
+      const dataUrl = await toPng(brochureRef.current, {
+        cacheBust: true,
+        width: 794, // A4 width in pixels at 96dpi
+        height: 1123, // A4 height in pixels at 96dpi
+      });
+      saveAs(dataUrl, `Brosur-${product.name}.png`);
+    } catch (err) {
+      console.error('oops, something went wrong!', err);
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   return (
@@ -255,11 +269,98 @@ export function ProductDetailModal({ product, isOpen, onClose, onAddToCart, form
             </button>
             <button
               onClick={handlePrint}
-              className="col-span-2 flex items-center justify-center gap-2 py-2 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20 hover:bg-sky-500/20 transition-colors text-sm font-medium"
+              className="flex items-center justify-center gap-2 py-2 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20 hover:bg-sky-500/20 transition-colors text-sm font-medium"
             >
-              <Printer className="h-4 w-4" />
-              Cetak Brosur Promosi
+              <FileDown className="h-4 w-4" />
+              Cetak PDF
             </button>
+            <button
+              onClick={handleExportImage}
+              disabled={isExporting}
+              className="flex items-center justify-center gap-2 py-2 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20 hover:bg-sky-500/20 transition-colors text-sm font-medium disabled:opacity-50"
+            >
+              <ImageIcon className="h-4 w-4" />
+              {isExporting ? "Memproses..." : "Simpan Gambar"}
+            </button>
+          </div>
+
+          {/* Hidden Brochure for Image Export */}
+          <div className="fixed -left-[9999px] top-0">
+            <div 
+              ref={brochureRef}
+              style={{ width: '794px', height: '1123px' }}
+              className="bg-white p-8 relative font-['Plus_Jakarta_Sans']"
+            >
+              <div className="border-[6px] border-sky-500 h-full p-10 rounded-[40px] relative flex flex-col">
+                {/* Header */}
+                <div className="flex items-center justify-between mb-10 border-b-2 border-slate-100 pb-8">
+                  <div className="flex items-center gap-6">
+                    {storeSettings.logoUrl ? (
+                      <img src={storeSettings.logoUrl} className="h-20 w-auto object-contain" />
+                    ) : (
+                      <div className="w-16 h-16 bg-sky-500 rounded-2xl"></div>
+                    )}
+                    <div>
+                      <h1 className="text-4xl font-black tracking-tight text-slate-900 uppercase">{storeSettings.storeName}</h1>
+                      <p className="text-slate-500 font-bold tracking-[0.2em] text-xs">SALES • SERVIS • MAINTENANCE</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sky-600 font-black text-xl">KATALOG PROMOSI</p>
+                    <p className="text-slate-400 text-sm font-bold">{new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="flex-1 flex flex-col items-center justify-center">
+                  <div className="w-full h-[500px] mb-12 bg-slate-50 rounded-[40px] flex items-center justify-center p-10">
+                    <img src={product.image} className="max-w-full max-h-full object-contain" />
+                  </div>
+
+                  <div className="text-center w-full">
+                    <span className="inline-block px-5 py-2 bg-sky-50 text-sky-600 rounded-full text-sm font-black mb-6 uppercase tracking-widest border-2 border-sky-100">
+                      {product.category}
+                    </span>
+                    
+                    <h2 className="text-6xl font-black text-slate-900 mb-4 leading-none tracking-tighter">
+                      {product.name}
+                    </h2>
+                    
+                    <p className="text-2xl text-slate-500 leading-relaxed max-w-2xl mx-auto mb-10 font-bold">
+                      {product.description || "Performa terbaik untuk produktivitas Anda. Segera dapatkan di toko kami!"}
+                    </p>
+                    
+                    <div className="bg-sky-500 text-white px-12 py-6 rounded-3xl font-black text-6xl inline-block shadow-2xl shadow-sky-200">
+                      {formatRupiah(product.price)}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="mt-auto flex items-center justify-between bg-slate-50 p-10 rounded-[40px] border-2 border-slate-100">
+                  <div className="flex gap-8 items-center">
+                    <div className="p-4 bg-white rounded-3xl shadow-xl border-2 border-slate-100">
+                      <QRCodeSVG value={productUrl} size={120} />
+                    </div>
+                    <div>
+                      <p className="text-slate-400 font-black text-xs uppercase tracking-[0.3em] mb-2">Scan untuk detail</p>
+                      <p className="text-slate-900 font-black text-lg">Lihat spesifikasi lengkap</p>
+                    </div>
+                  </div>
+                  
+                  <div className="text-right">
+                    <div className="mb-6">
+                      <p className="text-slate-400 font-black text-xs uppercase tracking-[0.3em] mb-2">Hubungi Kami</p>
+                      <p className="text-4xl font-black text-slate-900">{storeSettings.storePhone}</p>
+                    </div>
+                    <div>
+                      <p className="text-slate-400 font-black text-xs uppercase tracking-[0.3em] mb-2">Lokasi Toko</p>
+                      <p className="text-sm font-black text-slate-700 max-w-[300px] leading-tight ml-auto">{storeSettings.storeAddress}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="flex items-center justify-between border-t border-slate-800 pt-4">
