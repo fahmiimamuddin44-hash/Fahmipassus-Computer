@@ -42,11 +42,11 @@ export function ProductDetailModal({ product, isOpen, onClose, onAddToCart, form
   };
 
   const handlePrint = () => {
-    const printContent = printRef.current;
-    if (!printContent) return;
-
     const printWindow = window.open("", "_blank");
-    if (!printWindow) return;
+    if (!printWindow) {
+      alert("Pop-up diblokir! Silakan izinkan pop-up untuk mencetak brosur.");
+      return;
+    }
 
     printWindow.document.write(`
       <html>
