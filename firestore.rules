@@ -108,5 +108,12 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isAdmin();
     }
+
+    match /active_sessions/{sessionId} {
+      allow read: if isAdmin();
+      allow create, update: if true && hasOnlyAllowedFields(['lastSeen', 'userId', 'isAnonymous']) &&
+                               request.resource.data.lastSeen is timestamp;
+      allow delete: if true;
+    }
   }
 }

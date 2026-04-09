@@ -57,6 +57,17 @@
         "createdAt": { "type": "string", "format": "date-time" }
       },
       "required": ["ticketId", "customer", "phone", "device", "issue", "status", "updates"]
+    },
+    "ActiveSession": {
+      "title": "Active Session",
+      "description": "Tracks a user session for real-time presence.",
+      "type": "object",
+      "properties": {
+        "lastSeen": { "type": "string", "format": "date-time" },
+        "userId": { "type": "string" },
+        "isAnonymous": { "type": "boolean" }
+      },
+      "required": ["lastSeen"]
     }
   },
   "firestore": {
@@ -71,6 +82,10 @@
     "service_tickets/{ticketId}": {
       "schema": { "$ref": "#/entities/ServiceTicket" },
       "description": "Stores service bookings and their tracking updates."
+    },
+    "active_sessions/{sessionId}": {
+      "schema": { "$ref": "#/entities/ActiveSession" },
+      "description": "Stores active user sessions for real-time tracking."
     }
   }
 }

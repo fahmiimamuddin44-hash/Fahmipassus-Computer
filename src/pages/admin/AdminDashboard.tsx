@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where, onSnapshot, Timestamp } from "firebase/firestore";
 import { db, handleFirestoreError, OperationType } from "@/lib/firebase";
 import { Link } from "react-router-dom";
-import { Package, Wrench, Users, DollarSign, BarChart3, Settings } from "lucide-react";
+import { Package, Wrench, Users, DollarSign, BarChart3, Settings, Activity } from "lucide-react";
 import { motion } from "motion/react";
 
 export function AdminDashboard() {
@@ -11,10 +11,24 @@ export function AdminDashboard() {
     services: 0,
     tickets: 0,
     activeTickets: 0,
+    activeUsers: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Real-time listener for active users (last 5 minutes)
+    const fiveMinutesAgo = new Timestamp(Timestamp.now().seconds - 300, 0);
+    const activeUsersQuery = query(
+      collection(db, "active_sessions"),
+      where("lastSeen", ">=", fiveMinutesAgo)
+    );
+
+    const unsubscribeUsers = onSnapshot(activeUsersQuery, (snapshot) => {
+      setStats(prev => ({ ...prev, activeUsers: snapshot.size }));
+    }, (error) => {
+      handleFirestoreError(error, OperationType.GET, "active_sessions");
+    });
+
     const fetchStats = async () => {
       try {
         const productsSnap = await getDocs(collection(db, "products"));
@@ -23,12 +37,13 @@ export function AdminDashboard() {
         
         const activeTickets = ticketsSnap.docs.filter(doc => doc.data().status < 3).length;
 
-        setStats({
+        setStats(prev => ({
+          ...prev,
           products: productsSnap.size,
           services: servicesSnap.size,
           tickets: ticketsSnap.size,
           activeTickets,
-        });
+        }));
       } catch (error) {
         handleFirestoreError(error, OperationType.GET, "products/services/service_tickets");
       } finally {
@@ -37,11 +52,12 @@ export function AdminDashboard() {
     };
 
     fetchStats();
+    return () => unsubscribeUsers();
   }, []);
 
   const statCards = [
+    { name: "User Online", value: stats.activeUsers, icon: Activity, color: "text-blue-500", bg: "bg-blue-500/10" },
     { name: "Total Produk", value: stats.products, icon: Package, color: "text-sky-500", bg: "bg-sky-500/10" },
-    { name: "Layanan Servis", value: stats.services, icon: Wrench, color: "text-purple-500", bg: "bg-purple-500/10" },
     { name: "Total Tiket Servis", value: stats.tickets, icon: Wrench, color: "text-emerald-500", bg: "bg-emerald-500/10" },
     { name: "Servis Aktif", value: stats.activeTickets, icon: Wrench, color: "text-amber-500", bg: "bg-amber-500/10" },
   ];

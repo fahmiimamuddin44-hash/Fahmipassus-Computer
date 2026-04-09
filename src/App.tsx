@@ -12,6 +12,7 @@ import { PCBuilder } from "./pages/PCBuilder";
 import { Service } from "./pages/Service";
 import { Location } from "./pages/Location";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { PresenceTracker } from "./components/PresenceTracker";
 
 // Admin
 import { AdminLayout } from "./components/layout/AdminLayout";
@@ -26,6 +27,7 @@ import { AdminSettings } from "./pages/admin/AdminSettings";
 export default function App() {
   return (
     <ErrorBoundary>
+      <PresenceTracker />
       <BrowserRouter>
         <Routes>
           {/* Public Routes */}
