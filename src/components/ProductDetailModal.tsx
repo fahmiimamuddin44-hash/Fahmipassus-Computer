@@ -1,5 +1,7 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { X, ShoppingCart, Star } from "lucide-react";
+import { X, ShoppingCart, Star, Share2, Printer, MessageCircle, Instagram, Copy, Check } from "lucide-react";
+import { useState, useRef } from "react";
+import { QRCodeSVG } from "qrcode.react";
 
 interface Product {
   id: string;
@@ -20,7 +22,94 @@ interface ProductDetailModalProps {
 }
 
 export function ProductDetailModal({ product, isOpen, onClose, onAddToCart, formatRupiah }: ProductDetailModalProps) {
+  const [isCopied, setIsCopied] = useState(false);
+  const printRef = useRef<HTMLDivElement>(null);
+
   if (!product) return null;
+
+  const productUrl = `${window.location.origin}/katalog?id=${product.id}`;
+  const shareText = `Cek produk menarik ini di Fahmipassus Computer: ${product.name} - ${formatRupiah(product.price)}\n\nLihat detailnya di: ${productUrl}`;
+
+  const handleShareWhatsApp = () => {
+    const url = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+    window.open(url, "_blank");
+  };
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(productUrl);
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
+  };
+
+  const handlePrint = () => {
+    const printContent = printRef.current;
+    if (!printContent) return;
+
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Cetak Promosi - ${product.name}</title>
+          <script src="https://cdn.tailwindcss.com"></script>
+          <style>
+            @media print {
+              body { padding: 0; margin: 0; }
+              .no-print { display: none; }
+            }
+          </style>
+        </head>
+        <body class="p-8 bg-white text-black">
+          <div class="max-w-2xl mx-auto border-4 border-black p-8 rounded-3xl">
+            <div class="text-center mb-8">
+              <h1 class="text-4xl font-black mb-2 uppercase tracking-tighter">Fahmipassus Computer</h1>
+              <p class="text-xl font-bold text-gray-600">Solusi Kebutuhan IT Anda</p>
+            </div>
+            
+            <div class="flex flex-col items-center gap-8">
+              <img src="${product.image}" class="w-full h-80 object-contain rounded-2xl shadow-lg" />
+              
+              <div class="text-center w-full">
+                <h2 class="text-5xl font-black mb-4 leading-tight">${product.name}</h2>
+                <div class="inline-block bg-black text-white px-8 py-4 rounded-full text-4xl font-black mb-6">
+                  ${formatRupiah(product.price)}
+                </div>
+                <p class="text-2xl text-gray-700 mb-8 max-w-lg mx-auto leading-relaxed">
+                  ${product.description || "Performa terbaik untuk produktivitas Anda."}
+                </p>
+              </div>
+
+              <div class="flex items-center justify-between w-full border-t-4 border-dashed border-gray-300 pt-8">
+                <div class="text-left">
+                  <p class="text-xl font-bold mb-2">Scan untuk Detail:</p>
+                  <div id="qrcode-container"></div>
+                </div>
+                <div class="text-right">
+                  <p class="text-xl font-bold">Hubungi Kami:</p>
+                  <p class="text-3xl font-black">0812-3456-7890</p>
+                  <p class="text-lg text-gray-500 mt-2">Jl. Contoh Alamat No. 123</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <script>
+            // We need to wait for images and then print
+            window.onload = () => {
+              // Copy the QR code SVG from the parent window if possible or just use the URL
+              const qrContainer = document.getElementById('qrcode-container');
+              qrContainer.innerHTML = \`<img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(productUrl)}" />\`;
+              setTimeout(() => {
+                window.print();
+                // window.close();
+              }, 500);
+            };
+          </script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
@@ -51,6 +140,30 @@ export function ProductDetailModal({ product, isOpen, onClose, onAddToCart, form
 
           <p className="text-slate-400 mb-6 text-sm leading-relaxed">{product.description || "Tidak ada deskripsi tersedia."}</p>
           
+          <div className="grid grid-cols-2 gap-3 mb-6">
+            <button
+              onClick={handleShareWhatsApp}
+              className="flex items-center justify-center gap-2 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 transition-colors text-sm font-medium"
+            >
+              <MessageCircle className="h-4 w-4" />
+              WhatsApp
+            </button>
+            <button
+              onClick={handleCopyLink}
+              className="flex items-center justify-center gap-2 py-2 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700 transition-colors text-sm font-medium"
+            >
+              {isCopied ? <Check className="h-4 w-4 text-emerald-400" /> : <Copy className="h-4 w-4" />}
+              {isCopied ? "Tersalin" : "Salin Link"}
+            </button>
+            <button
+              onClick={handlePrint}
+              className="col-span-2 flex items-center justify-center gap-2 py-2 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20 hover:bg-sky-500/20 transition-colors text-sm font-medium"
+            >
+              <Printer className="h-4 w-4" />
+              Cetak Brosur Promosi
+            </button>
+          </div>
+
           <div className="flex items-center justify-between border-t border-slate-800 pt-4">
             <span className="text-xl font-bold text-emerald-400">{formatRupiah(product.price)}</span>
             <button
