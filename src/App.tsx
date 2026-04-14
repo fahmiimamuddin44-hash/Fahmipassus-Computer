@@ -21,6 +21,7 @@ import { AdminDashboard } from "./pages/admin/AdminDashboard";
 import { AdminProducts } from "./pages/admin/AdminProducts";
 import { AdminTickets } from "./pages/admin/AdminTickets";
 import { AdminServices } from "./pages/admin/AdminServices";
+import { AdminGallery } from "./pages/admin/AdminGallery";
 import { AdminReports } from "./pages/admin/AdminReports";
 import { AdminSettings } from "./pages/admin/AdminSettings";
 
@@ -40,7 +41,7 @@ export default function App() {
             <Route path="cek-status" element={<ServiceStatus />} />
             <Route path="*" element={<div className="container mx-auto px-4 py-24 text-center text-slate-400">Halaman sedang dalam pengembangan.</div>} />
           </Route>
-
+ 
           {/* Admin Routes */}
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminLayout />}>
@@ -48,6 +49,7 @@ export default function App() {
             <Route path="products" element={<AdminProducts />} />
             <Route path="tickets" element={<AdminTickets />} />
             <Route path="services" element={<AdminServices />} />
+            <Route path="gallery" element={<AdminGallery />} />
             <Route path="reports" element={<AdminReports />} />
             <Route path="settings" element={<AdminSettings />} />
           </Route>

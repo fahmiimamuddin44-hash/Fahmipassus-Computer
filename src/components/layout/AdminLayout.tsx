@@ -3,7 +3,7 @@ import { Outlet, Navigate, Link, useLocation } from "react-router-dom";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
-import { LayoutDashboard, Package, Wrench, LogOut, Cpu, AlertTriangle, BarChart3, Settings } from "lucide-react";
+import { LayoutDashboard, Package, Wrench, LogOut, Cpu, AlertTriangle, BarChart3, Settings, Image as ImageIcon } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
 export function AdminLayout() {
@@ -75,6 +75,7 @@ export function AdminLayout() {
         { name: "Tiket Servis", path: "/admin/tickets" },
       ]
     },
+    { name: "Galeri", path: "/admin/gallery", icon: ImageIcon },
     { name: "Laporan", path: "/admin/reports", icon: BarChart3 },
     { name: "Pengaturan", path: "/admin/settings", icon: Settings },
   ];

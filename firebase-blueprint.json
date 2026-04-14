@@ -68,6 +68,17 @@
         "isAnonymous": { "type": "boolean" }
       },
       "required": ["lastSeen"]
+    },
+    "GalleryImage": {
+      "title": "Gallery Image",
+      "description": "An image for the store gallery.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "imageUrl": { "type": "string", "format": "uri" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["imageUrl", "createdAt"]
     }
   },
   "firestore": {
@@ -86,6 +97,10 @@
     "active_sessions/{sessionId}": {
       "schema": { "$ref": "#/entities/ActiveSession" },
       "description": "Stores active user sessions for real-time tracking."
+    },
+    "gallery/{imageId}": {
+      "schema": { "$ref": "#/entities/GalleryImage" },
+      "description": "Stores images for the store gallery."
     }
   }
 }

@@ -115,5 +115,10 @@ service cloud.firestore {
                                request.resource.data.lastSeen is timestamp;
       allow delete: if true;
     }
+
+    match /gallery/{imageId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
   }
 }

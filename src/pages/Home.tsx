@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 import { Monitor, Cpu, Wrench, HardDrive, ArrowRight, Star, ShoppingCart, PackageOpen } from "lucide-react";
-import { collection, getDocs, query, limit, doc, getDoc } from "firebase/firestore";
+import { collection, getDocs, query, limit, doc, getDoc, orderBy } from "firebase/firestore";
 import { db, handleFirestoreError, OperationType } from "@/lib/firebase";
 import { ProductDetailModal } from "@/components/ProductDetailModal";
 import { useCartStore } from "@/lib/store";
@@ -16,6 +16,7 @@ const categories = [
 
 export function Home() {
   const [bestSellers, setBestSellers] = useState<any[]>([]);
+  const [galleryImages, setGalleryImages] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState<any | null>(null);
   const { addItem } = useCartStore();
@@ -48,6 +49,11 @@ export function Home() {
         } else {
           setBestSellers([]);
         }
+
+        // Fetch gallery
+        const galleryQ = query(collection(db, "gallery"), orderBy("createdAt", "desc"), limit(6));
+        const gallerySnap = await getDocs(galleryQ);
+        setGalleryImages(gallerySnap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -261,6 +267,41 @@ export function Home() {
           </Link>
         </div>
       </section>
+
+      {/* Gallery Section */}
+      {galleryImages.length > 0 && (
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">Galeri Toko</h2>
+            <p className="text-slate-400">Aktivitas dan suasana di toko kami.</p>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {galleryImages.map((image, index) => (
+              <motion.div
+                key={image.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: index * 0.1 }}
+                className="group relative aspect-video rounded-2xl overflow-hidden border border-slate-800"
+              >
+                <img
+                  src={image.imageUrl}
+                  alt={image.title || "Gallery Image"}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  referrerPolicy="no-referrer"
+                />
+                {image.title && (
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                    <p className="text-white text-sm font-medium">{image.title}</p>
+                  </div>
+                )}
+              </motion.div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Service CTA */}
       <section className="container mx-auto px-4 sm:px-6 lg:px-8">
